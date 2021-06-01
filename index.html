@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two JS</title>
+    <link rel="stylesheet" href="radio-pretty.css">
+    <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: row;
+        }
+        .menu {
+            background-color: wheat;
+            height: 100vh;
+        }
+        .functionContainer {
+            display: flex;
+            flex-direction: column;
+            /* justify-content: center; */
+            margin-top: 40px;
+            align-items: flex-end;
+            float: right;
+            height: auto;
+            width: 300px;
+            
+        }
+        .button {
+            /* 取消按钮自带的轮廓 */
+            float: right;
+            outline: 0;
+            width: 100px;
+            height: 50px;
+            color: #409eff;
+            /* 圆角属性 */
+            border-radius: 4px;
+            border: 1px solid #b3d8ff;
+            background-color: #ecf5ff;
+            transform: all 0.3s;
+            /* 变鼠标 */
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .button:hover {
+            color: #fff;
+            border-color: #409eff;
+            background-color: #409eff;
+        }
+        .button:disabled{
+            color: #fff;
+            border-color: #CCCCCC;
+            background-color: #CCCCCC;
+        }
+
+        input[type=text]{
+            font-size:12px;
+            /* 设置输入框中字体的大小 */
+
+            height:45px; 
+            width: 155px;
+            /* 设置输入框的高度 */
+
+            border-radius:4px; 
+            /* 设置输入框的圆角的大小 */
+
+            border:1px solid #c8cccf;
+            /* 设置输入框边框的粗细和颜色 */
+
+            color:#986655; 
+            /* 设置输入框中文字的颜色 */
+
+            outline:0; 
+            /* 将输入框点击的时候出现的边框去掉 */
+
+            text-align:left; 
+            /* 设置输入框中文字的位置 */
+
+            padding-left: 10px;
+            /* box-shadow: 2px 2px 5px 0 #ccc;   */
+            margin-right: 10px;
+            
+
+        }
+
+        input[type=text]::-webkit-input-placeholder{
+            color: #986655;
+            font-size: 12px;
+        }
+
+        .functionContainer div {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2px;
+        }
+
+     
+        
+    </style>
+</head>
+<body>
+    <div class="container"></div>
+    <div class="menu">
+        <div class="radioContainer">
+            <div class="radio">
+                <input id="radio-1" name="radio" type="radio" checked>
+                <label for="radio-1" class="radio-label">二叉树</label>
+            </div>
+            
+            <div class="radio">
+                <input id="radio-2" name="radio" type="radio" value="二叉搜索树">
+                <label  for="radio-2" class="radio-label">二叉搜索树</label>
+            </div>
+            
+            <div class="radio">
+                <input id="radio-3" name="radio" type="radio">
+                <label for="radio-3" class="radio-label">AVL树</label>
+            </div>
+
+            <div class="radio">
+                <input id="radio-4" name="radio" type="radio" disabled>
+                <label for="radio-4" class="radio-label">红黑树</label>
+            </div>
+
+            <div class="radio">
+                <input id="radio-5" name="radio" type="radio" disabled>
+                <label for="radio-5" class="radio-label">AA树</label>
+            </div>
+
+            <div class="radio">
+                <input id="radio-6" name="radio" type="radio" disabled>
+                <label for="radio-6" class="radio-label">B树</label>
+            </div>
+
+            <div class="radio">
+                <input id="radio-7" name="radio" type="radio" disabled>
+                <label for="radio-7" class="radio-label">2-3树</label>
+            </div>
+
+            <div class="radio">
+                <input id="radio-8" name="radio" type="radio" disabled>
+                <label for="radio-8" class="radio-label">2-3-4树</label>
+            </div>
+
+            <div class="radio">
+                <input id="radio-9" name="radio" type="radio" disabled>
+                <label for="radio-9" class="radio-label">B+树</label>
+            </div>
+
+            <div class="radio">
+                <input id="radio-10" name="radio" type="radio" disabled>
+                <label for="radio-10" class="radio-label">B*树</label>
+            </div>
+        </div>
+        <div class="functionContainer">
+            <div>
+                <input id="treeArrayInput" type="text" placeholder="树数组,例如:[1,[],[]]">
+                <button class="button" id="drawTree" >画树</button>
+            </div>
+            <div>
+                <input id="searchInput" type="text" placeholder="待查找的数">
+                <button class="button" id="searchButton">查找</button>
+            </div>
+            <div>
+                <button class="button" id="VLRButton">前序遍历</button>
+            </div>
+            <div>
+                <button class="button" id="LDRButton">中序遍历</button>
+            </div>
+            <div>
+                <button class="button" id="LRDButton">后序遍历</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="two.min.js"></script>
+<script src="index.js"></script>
+<script src="radio-changed.js"></script>
+</html>
