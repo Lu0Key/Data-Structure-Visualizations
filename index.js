@@ -433,15 +433,21 @@ function judgeArray(array) {
         return true;
     }
     if(array.length == 3){
+        console.log("array[0]",array[0]);
+        console.log("isNaN(array[0])",isNaN(array[0]))
         let a = true;
         if(isNaN(array[0])){
-            a = judgeArray(array[0]);
+            a = false;
         }
-        if(isNaN(array[1])){
+        if(Array.isArray(array[1])){
             a = a&&judgeArray(array[1]);
+        }else{
+            a = false;
         }
-        if(isNaN(array[2])){
+        if(Array.isArray(array[2])){
             a = a&&judgeArray(array[2]);
+        }else{
+            a = false;
         }
         return a;
     }else{

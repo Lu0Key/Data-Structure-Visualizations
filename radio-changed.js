@@ -45,9 +45,20 @@ $(()=>{
             <button class="button" id="LRDButton">后序遍历</button>
         </div>
         `;
+        
         $('#drawTree').click(drawTree);
         $("#VLRButton,#LDRButton,#LRDButton").click((e)=>{order(e.currentTarget.textContent);});
         $("#searchButton").click(()=>{findNode();});
+        $("#treeArrayInput").keydown((e)=>{
+            if(e.keyCode===13){
+                $('#drawTree').click();
+            }
+        });
+        $("#searchInput").keydown((e)=>{
+            if(e.keyCode===13){
+                $("#searchButton").click();
+            }
+        })
     };
 
     function setBST() {
