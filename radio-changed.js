@@ -13,6 +13,8 @@ $(()=>{
     function radioView(str) {
         treeArray = null;
         root = null;
+        two.clear();
+        two.update();
         if(str === "二叉树"){
             setBinaryTree();
         }
