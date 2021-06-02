@@ -97,7 +97,7 @@ $(()=>{
         `;
         $("#addInput")[0].value = "1,22";
         $("#treeArrayInput")[0].value = "[1,3,5,6,7,8]";
-        $('#drawTree').click(drawBSTree);
+        $('#drawTree').click(()=>{drawBSTree("BST");});
         $("#addButton").click(()=>{
             console.log("点了添加");
             let str = $("#addInput")[0].value;
@@ -124,6 +124,11 @@ $(()=>{
         $("#searchButton").click(()=>{findBSTNode();});
         $("#deleteButton").click(()=>{
             alert("还没写呢！");
+        })
+        $("#deleteInput").keydown((e)=>{
+            if(e.keyCode===13){
+                $("#deleteButton").click();
+            }
         })
     }
 
@@ -175,11 +180,45 @@ $(()=>{
         $("#addInput")[0].value = "1,22";
         $("#treeArrayInput")[0].value = "[1,3,5,6,7,8]";
         $('#drawTree').click(()=>{
-            alert("还没写呢！");
+            drawBSTree("AVL");
         });
         $("#searchButton").click(()=>{findBSTNode();});
         $("#addButton").click(()=>{
-            alert("还没写呢！");
+            console.log("点了添加");
+            let str = $("#addInput")[0].value;
+            $("#addInput")[0].value = "";
+            $("#addInput").attr("disabled",true);
+            array = str.split(",");
+            for(let i = 0;i<array.length;i++){
+                if(isNaN(array[i])){
+                    console.log("请重新输入数组");
+                    return;
+                }else if(array[i] === ""){
+                    console.log("请重新输入数组");
+                    return;
+                }else{
+                    array[i] -= 0;
+                }
+            }
+            console.log(array);
+            let promise = new Promise((resolve,reject)=>{
+                for(let i =0;i<array.length;i++){
+                    isAnimation = true;
+                    console.log("array:",i,array[i]);
+                    insertAVLTreeNode(array[i]);   
+                }
+                let timer = setInterval(()=>{
+                    if(!isAnimation){
+                        resolve();
+                        window.clearInterval(timer);
+                    }
+                },200);
+            });
+            promise.then(()=>{
+                $("#addInput").attr("disabled",false);
+            });
+            two.update();
+            
         })
         $("#deleteButton").click(()=>{
             alert("还没写呢！");
@@ -202,6 +241,26 @@ $(()=>{
         })
         $("button#fixupButton").click(()=>{
             console.log("点击了");
+        })
+        $("#treeArrayInput").keydown((e)=>{
+            if(e.keyCode===13){
+                $('#drawTree').click();
+            }
+        });
+        $("#addInput").keydown((e)=>{
+            if(e.keyCode===13){
+                $('#addButton').click();
+            }
+        });
+        $("#searchInput").keydown((e)=>{
+            if(e.keyCode===13){
+                $("#searchButton").click();
+            }
+        })
+        $("#deleteInput").keydown((e)=>{
+            if(e.keyCode===13){
+                $("#deleteButton").click();
+            }
         })
     }
 })

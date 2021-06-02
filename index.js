@@ -143,6 +143,22 @@ function Tree(data) {
         this.removeLeftLine();
         this.removeCircle();
     }
+
+    this.isBalance = ()=>{
+        let leftDepth = 0;
+        let rightDepth = 0;
+        if(this.leftTree!=null){
+            leftDepth = this.leftTree.depth();
+        }
+        if(this.rightTree!=null){
+            rightDepth = this.rightTree.depth();
+        }
+        if(Math.abs(leftDepth-rightDepth)>1){
+            return false;
+        }else{
+            return true;
+        }
+    }
 }
 
 
@@ -162,6 +178,7 @@ var params = {
 
 var treeArray = null;
 var root = null;
+var isAnimation = false;
 
 let container = document.querySelector(".container");
 
@@ -249,7 +266,6 @@ function order(str) {
 // 前序遍历
 function preorder(node,queue) {
     if(node == null) return;
-    console.log(node.data)
     queue.push(node);
     preorder(node.leftTree,queue);
     preorder(node.rightTree,queue);
@@ -524,16 +540,14 @@ function ErrorMessage(param) {
 }
 
 // ------ 画二叉搜索树 -------
-function drawBSTree() {
+function drawBSTree(params) {
     two.clear();
     treeArray = null;
     root = null;
     let inputValue = $("#treeArrayInput")[0].value;
     if(!judgeStr2LinearArray(inputValue)){console.log("请输入正确数组");return;}
     treeArray = JSON.parse(inputValue);
-    // initBSTreeData();
-    // drawTreeImage();
-    insertArray(treeArray);
+    insertArray(treeArray,params);
 }
 
 function judgeStr2LinearArray(str) {
@@ -589,9 +603,14 @@ function initBSTreeData() {
     setBSTPosition(root,params.width/2,100);
 }
 
-function insertArray(array) {
+function insertArray(array,type) {
     for(let i = 0 ;i<array.length;i++){
-        insertBSTNode(root,array[i]);
+        if(type === "BST"){
+            insertBSTNode(root,array[i]);
+        }
+        if(type === "AVL"){
+            insertAVLTreeNode(array[i]);
+        }
     }
 }
 
@@ -619,38 +638,42 @@ function insertNode(node,data){
     }
 }
 
-function insertBSTNode(node,data) {
+function insertBSTNode(node,data,treeType) {
     if(root === null){
         console.log(data);
         root = new Tree(data);
         root.x = params.width/2;
         root.y = 100;
         root.drawTreeNode();
-        return;
+        isAnimation = false;
+        return root;
     }
-    // 左边
+    // 比自身更小的都放左边
     if(node.data>data){
         if(node.leftTree === null){
             node.leftTree = new Tree(data);
             node.leftTree.parent = node;
-            BSTfixup(node.leftTree,"left");
+            console.log("treeType",treeType);
+            BSTfixup(node.leftTree,"left",treeType);
         }else{
-            insertBSTNode(node.leftTree,data);
+            insertBSTNode(node.leftTree,data,treeType);
         }
     }else{
+    // 大于等于自身的才放右边
     // 右边
         if(node.rightTree === null){
             node.rightTree = new Tree(data);
-            console.log("rightTree",node);
             node.rightTree.parent = node;
-            BSTfixup(node.rightTree,"right");
+            console.log("treeType",treeType);
+            BSTfixup(node.rightTree,"right",treeType);
         }else{
-            insertBSTNode(node.rightTree,data);
+            insertBSTNode(node.rightTree,data,treeType);
         }
     }
 }
 
-function BSTfixup(node,str) {
+function BSTfixup(node,str,treeType) {
+    console.log("treeType",treeType);
     console.log("进了fixup");
     console.log(str);
     
@@ -675,7 +698,7 @@ function BSTfixup(node,str) {
         node.parent.drawTreeNode();
         node.drawTreeNode();
         node.flash();
-        console.log("node:",node);
+        isAnimation = false;
         return;
     }
     // flag: true  左子树
@@ -809,6 +832,10 @@ function BSTfixup(node,str) {
 
     promise.then(()=>{
         console.log("移动完成");
+        if(treeType === "AVL"){
+            console.log("开始平衡移动");
+            AVLTreeFixup(node,"");
+        }
     });
 }
 
@@ -888,5 +915,253 @@ function findBSTNode() {
 }
 
 
+function insertAVLTreeNode(data) {
+    insertBSTNode(root,data,"AVL");
+}
 
+function AVLTreeFixup(node,str) {
+    console.log("进入AVL平衡调整");
+    // 放查询节点的
+    let queue = new Queue();
+    let data = node.data;
+    let p = node;
+    let tempNode;
+    while(p!=null&&p.isBalance()){
+        queue.push(p);
+        p = p.parent;
+    }
+    // 表明一直到 root 都是平衡的
+    
+    let promise = new Promise((resolve, reject)=>{
+        let timer = setInterval(()=>{
+            tempNode = queue.pop();
+            tempNode.flash();
+            if(queue.length == 0){
+                resolve();
+                window.clearInterval(timer);
+            }
+        },800);
+    });
 
+    promise.then(()=>{
+        if(p === null){
+            isAnimation = false;
+            console.log("平衡！");
+        }else if(!p.isBalance()){
+            if(p.data > node.data){
+                // 小于自身一定是自身的左子树
+                // 因此p的左子树一定不为空
+
+                if(p.leftTree.data > node.data){
+                    // 一定是左子树的左子树
+                    // 右旋
+                    console.log("左左");
+                    AVLLLR(p);
+                }else{
+                    // 左子树的右子树
+                    // 右旋-左旋
+                    console.log("左右");
+                }
+            }else{
+                // 右子树
+                if(p.rightTree.data > node.data){
+                    // 右子树的左子树
+                    // 左旋-右旋
+                    console.log("右左");
+                }else{
+                    // 右子树的右子树
+                    // 左旋
+                    console.log("右右");
+                }
+            }    
+        }
+        return;
+    });
+}
+
+function AVLLLR(p) {
+    let c = p.leftTree;
+    let pIsRoot = p.parent === null ? true : false;
+    console.log("p is root?",pIsRoot);
+    // p的右边子树的所有结点，需要下降
+    let queueRight = new Queue();
+    preorder(p.rightTree,queueRight);
+    // c的左边子树的所有结点，需要上升
+    let queueLeft = new Queue();
+    preorder(c.leftTree,queueLeft);
+    // 起始位置
+    let pStartPositionX = p.x;
+    let pStartPositionY = p.y;
+    let cStartPositionX = c.x;
+    let cStartPositionY = c.y;
+    
+    // console.log("queueLeft",queueLeft.length);
+    // console.log("queueRight",queueRight);
+
+    // 交换线权
+    let tempLine = c.rightLine;
+    c.rightLine = p.leftLine;
+    p.leftLine = tempLine;
+
+    // 交换地位
+    let tempTree = c.rightTree; 
+    c.parent = p.parent;
+    p.parent = c;
+    c.rightTree = p;
+    p.leftTree = tempTree;
+
+    // 交换 C rightLine 的头尾
+    // 这样c的rightLine 一定存在，因此需要线交换头尾
+    let tempValue = c.rightLine._collection[0].x;
+    c.rightLine._collection[0].x = c.rightLine._collection[1].x;
+    c.rightLine._collection[1].x = tempValue;
+    tempValue = c.rightLine._collection[0].y;
+    c.rightLine._collection[0].y = c.rightLine._collection[1].y;
+    c.rightLine._collection[1].y = tempValue;
+
+    // 如果 p leftLine 存在，交换头尾
+    let NodeLineDistance;
+    let cRightQueue = new Queue();
+    if(p.leftLine != null){
+        console.log("p.leftTree",p.leftTree.data);
+        NodeLineDistance = pStartPositionX - p.leftLine._collection[0].x;
+        preorder(p.leftTree,cRightQueue);
+        p.removeCircle();
+        p.drawTreeNode();
+    }
+
+    if(pIsRoot){
+        root = c;
+    }else{
+        c.parent.leftTree = c;
+    }
+
+    console.log("queueLeft",queueLeft);
+
+    promise = new Promise((resolve,reject)=>{
+        console.log("进入promise");
+        let timer = setInterval(()=>{
+            let args;
+            if(pIsRoot){
+                args = {
+                    x:(pStartPositionX-cStartPositionX)/50,
+                    y:(pStartPositionY-cStartPositionY)/50,
+                }
+            }else{
+                args = {
+                    x:0,
+                    y:-50/50,
+                }
+                if(c.data<c.parent.data){
+                    // 说明是父节点的左子树
+                    c.parent.leftLine._collection[1].x -= (pStartPositionX-cStartPositionX)/50;
+                }
+            }
+            //降低高度，对应 y 增加
+            console.log("刷新一次");
+            p.x += args.x;
+            p.y -= args.y;
+            p.circle.translation.set(p.x,p.y);
+            p.text.translation.set(p.x,p.y);
+            if(p.rightLine != null){
+                p.rightLine._collection[0].x += args.x;
+                p.rightLine._collection[0].y -= args.y;
+                p.rightLine._collection[1].x += args.x;
+                p.rightLine._collection[1].y -= args.y;
+            }
+            // p 的右边的所有
+            for(let i =0;i<queueRight.data.length;i++){
+                queueRight.data[i].x += args.x;
+                queueRight.data[i].y -= args.y;
+                queueRight.data[i].circle.translation.set(queueRight.data[i].x,queueRight.data[i].y);
+                queueRight.data[i].text.translation.set(queueRight.data[i].x,queueRight.data[i].y);
+                if(queueRight.data[i].leftLine != null){
+                    queueRight.data[i].leftLine._collection[0].x = queueRight.data[i].x;
+                    queueRight.data[i].leftLine._collection[0].y = queueRight.data[i].y;
+                    queueRight.data[i].leftLine._collection[1].x = queueRight.data[i].leftTree.x;
+                    queueRight.data[i].leftLine._collection[1].y = queueRight.data[i].leftTree.y;
+                }
+                if(queueRight.data[i].rightLine != null){
+                    queueRight.data[i].rightLine._collection[0].x = queueRight.data[i].x;
+                    queueRight.data[i].rightLine._collection[0].y = queueRight.data[i].y;
+                    queueRight.data[i].rightLine._collection[1].x = queueRight.data[i].rightTree.x;
+                    queueRight.data[i].rightLine._collection[1].y = queueRight.data[i].rightTree.y;
+                }
+            }
+            // 升高高度, c的左子树一定存在，因此c的 leftLine 一定存在，
+            // 对应 y减少
+            c.x += args.x;
+            c.y += args.y;
+            c.circle.translation.set(c.x,c.y);
+            c.text.translation.set(c.x,c.y)
+            c.leftLine._collection[0].x = c.x;
+            c.leftLine._collection[0].y = c.y;
+            c.leftLine._collection[1].x = c.leftTree.x;
+            c.leftLine._collection[1].y = c.leftTree.y;
+            c.rightLine._collection[0].x = c.x;
+            c.rightLine._collection[0].y = c.y;
+            c.rightLine._collection[1].x = c.rightTree.x;
+            c.rightLine._collection[1].y = c.rightTree.y;
+
+            for(let i =0;i<queueLeft.data.length;i++){
+                queueLeft.data[i].x += args.x;
+                queueLeft.data[i].y += args.y;
+                queueLeft.data[i].circle.translation.set(queueLeft.data[i].x,queueLeft.data[i].y);
+                queueLeft.data[i].text.translation.set(queueLeft.data[i].x,queueLeft.data[i].y);
+                if(queueLeft.data[i].leftLine != null){
+                    queueLeft.data[i].leftLine._collection[0].x = queueLeft.data[i].x;
+                    queueLeft.data[i].leftLine._collection[0].y = queueLeft.data[i].y;
+                    queueLeft.data[i].leftLine._collection[1].x = queueLeft.data[i].leftTree.x;
+                    queueLeft.data[i].leftLine._collection[1].y = queueLeft.data[i].leftTree.y;
+                }
+                if(queueLeft.data[i].rightLine != null){
+                    queueLeft.data[i].rightLine._collection[0].x = queueLeft.data[i].x;
+                    queueLeft.data[i].rightLine._collection[0].y = queueLeft.data[i].y;
+                    queueLeft.data[i].rightLine._collection[1].x = queueLeft.data[i].rightTree.x;
+                    queueLeft.data[i].rightLine._collection[1].y = queueLeft.data[i].rightTree.y;
+                }
+            }
+
+            // 特别部分的处理 p 的 leftLine
+            if(p.leftLine != null){
+                for(let i=0;i<cRightQueue.length;i++){
+                    cRightQueue.data[i].x += args.x;
+                    // 不需要提升
+                    cRightQueue.data[i].circle.translation.set(cRightQueue.data[i].x,cRightQueue.data[i].y);
+                    cRightQueue.data[i].text.translation.set(cRightQueue.data[i].x,cRightQueue.data[i].y);
+                    if(cRightQueue.data[i].leftLine != null){
+                        cRightQueue.data[i].leftLine._collection[0].x = cRightQueue.data[i].x;
+                        cRightQueue.data[i].leftLine._collection[0].y = cRightQueue.data[i].y;
+                        cRightQueue.data[i].leftLine._collection[1].x = cRightQueue.data[i].leftTree.x;
+                        cRightQueue.data[i].leftLine._collection[1].y = cRightQueue.data[i].leftTree.y;
+                    }
+                    if(cRightQueue.data[i].rightLine != null){
+                        cRightQueue.data[i].rightLine._collection[0].x = cRightQueue.data[i].x;
+                        cRightQueue.data[i].rightLine._collection[0].y = cRightQueue.data[i].y;
+                        cRightQueue.data[i].rightLine._collection[1].x = cRightQueue.data[i].rightTree.x;
+                        cRightQueue.data[i].rightLine._collection[1].y = cRightQueue.data[i].rightTree.y;
+                    }
+                }
+                p.leftLine._collection[0].x += args.x;
+                p.leftLine._collection[0].x +=(NodeLineDistance/50);
+                p.leftLine._collection[1].x += args.x;
+            }
+
+            //完成之后刷新
+            two.update();
+            if(Math.abs(pStartPositionY-p.y)>=50){
+                p.circle.translation.set(p.x,p.y);
+                p.text.translation.set(p.x,p.y);
+                two.update();
+                resolve();
+                window.clearInterval(timer);
+            };
+        },10);
+    });
+
+    promise.then(()=>{
+        console.log("一次调整结束");
+        AVLTreeFixup(c,"");
+    })
+
+}
