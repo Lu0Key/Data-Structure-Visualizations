@@ -167,7 +167,7 @@ $(()=>{
                 <label for="radio_auto" class="radio-label">自动修正</label>
             </div>
             <div class="radio">
-                <input id="radio_manual" name="fixed_model" type="radio">
+                <input id="radio_manual" name="fixed_model" type="radio" disabled>
                 <label for="radio_manual" class="radio-label">手动修正</label>
             </div>
         </div>
@@ -192,9 +192,11 @@ $(()=>{
             for(let i = 0;i<array.length;i++){
                 if(isNaN(array[i])){
                     console.log("请重新输入数组");
+                    $("#addInput").attr("disabled",false);
                     return;
                 }else if(array[i] === ""){
                     console.log("请重新输入数组");
+                    $("#addInput").attr("disabled",false);
                     return;
                 }else{
                     array[i] -= 0;
