@@ -969,6 +969,7 @@ function AVLTreeFixup(node,str) {
                     // 右子树的左子树
                     // 左旋-右旋
                     console.log("右左");
+                    AVLLRR(p);
                 }else{
                     // 右子树的右子树
                     // 左旋
@@ -1009,6 +1010,9 @@ function AVLLLR(p) {
     p.parent = c;
     c.rightTree = p;
     p.leftTree = tempTree;
+    if(p.leftTree != null){
+        p.leftTree.parent = p;
+    }
 
     // 交换 C rightLine 的头尾
     // 这样c的rightLine 一定存在，因此需要线交换头尾
@@ -1042,21 +1046,24 @@ function AVLLLR(p) {
 
     console.log("queueLeft",queueLeft);
 
+    let args;
+    if(pIsRoot){
+        args = {
+            x:(pStartPositionX-cStartPositionX)/50,
+            y:(pStartPositionY-cStartPositionY)/50
+        }
+    }else{
+        args = {
+            x:0,
+            y:-50/50
+        }
+    }
     promise = new Promise((resolve,reject)=>{
         console.log("进入promise");
+        
         let timer = setInterval(()=>{
-            let args;
-            if(pIsRoot){
-                args = {
-                    x:(pStartPositionX-cStartPositionX)/50,
-                    y:(pStartPositionY-cStartPositionY)/50,
-                }
-            }else{
-                args = {
-                    x:0,
-                    y:-50/50,
-                }
-                if(c.data<c.parent.data){
+            if(!pIsRoot){
+                if(c.data < c.parent.data){
                     // 说明是父节点的左子树
                     c.parent.leftLine._collection[1].x -= (pStartPositionX-cStartPositionX)/50;
                 }else{
@@ -1168,7 +1175,7 @@ function AVLLLR(p) {
     promise.then(()=>{
         console.log("一次调整结束");
         AVLTreeFixup(c,"");
-    })
+    });
 
 }
 
@@ -1179,16 +1186,21 @@ function AVLRRR(p) {
     console.log("p is root?",pIsRoot);
     // p的左边子树的所有结点，需要下降
     let queueLeft = new Queue();
-    preorder(p.leftTree,queueLeft);
+    if(p.leftTree!=null){
+        preorder(p.leftTree,queueLeft);
+    }
     // c的左边子树的所有结点，需要上升
     let queueRight = new Queue();
-    preorder(c.rightTree,queueRight);
+    if(c.rightTree!=null){
+        console.log("可以进行到这一步");
+        preorder(c.rightTree,queueRight);
+    }
     // 起始位置
     let pStartPositionX = p.x;
     let pStartPositionY = p.y;
     let cStartPositionX = c.x;
     let cStartPositionY = c.y;
-
+    
     // 交换线权
     let tempLine = c.leftLine;
     c.leftLine = p.rightLine;
@@ -1200,6 +1212,9 @@ function AVLRRR(p) {
     p.parent = c;
     c.leftTree = p;
     p.rightTree = tempTree;
+    if(p.rightTree != null){
+        p.rightTree.parent = p;
+    }
 
     // 交换 c 的 leftLine 的头尾
     // 这样 c 的 leftLine 一定存在，因此需要线交换头尾
@@ -1351,6 +1366,7 @@ function AVLRRR(p) {
             //完成之后刷新
             two.update();
             if(Math.abs(pStartPositionY-p.y)>=50){
+                // 我猜可以不要
                 p.circle.translation.set(p.x,p.y);
                 p.text.translation.set(p.x,p.y);
                 two.update();
@@ -1363,5 +1379,304 @@ function AVLRRR(p) {
     promise.then(()=>{
         console.log("一次调整结束");
         AVLTreeFixup(c,"");
+    })
+}
+
+
+// AVL tree left right rotation
+function AVLLRR(p) {
+    let c = p.rightTree;
+    let g = c.leftTree;
+
+    let cStartPositionX = c.x;
+    let cStartPositionY = c.y;
+    let gStartPositionX = g.x;
+    let gStartPositionY = g.y;
+    let args = {
+        x:0,
+        y:-50/50
+    };
+
+    // g 的左子树
+    let gLeft = new Queue();
+    if(g.leftTree != null){
+        preorder(g.leftTree,gLeft);
+    }
+    // g 的右子树(可能用不到)
+    let gRight = new Queue();
+    if(g.rightTree != null){
+        preorder(g.rightTree,gLeft);
+    }
+    // c 的右子树
+    let cRight = new Queue();
+    if(c.rightTree != null){
+        preorder(c.rightTree,cRight);
+    }
+
+    // 交换线权
+    let tempLine = g.rightLine;
+    g.rightLine = c.leftLine;
+    c.leftLine = tempLine;
+
+    // 交换地位
+    let tempNode = g.rightTree;
+    g.parent = p;
+    g.rightTree = c;
+    p.rightTree = g;
+    c.leftTree = tempNode;
+    c.parent = g;
+    if(c.leftTree != null){
+        c.leftTree.parent = c;
+    }
+
+    // g 的 rightLine 交换线头尾
+    let tempValue = g.rightLine._collection[0].x;
+    g.rightLine._collection[0].x = g.rightLine._collection[1].x;
+    g.rightLine._collection[1].x = tempValue;
+    tempValue = g.rightLine._collection[0].y;
+    g.rightLine._collection[0].y = g.rightLine._collection[1].y;
+    g.rightLine._collection[1].y = tempValue;
+    let cAndcLeftLineDistance;
+    if(c.leftLine != null){
+        cAndcLeftLineDistance = c.x-c.leftLine._collection[0].x;
+    }
+    let gAndpRightLineDistance = g.x-p.rightLine._collection[1].x;
+
+    let promise = new Promise((resolve,reject)=>{
+        let timer = setInterval(()=>{
+
+            //提升部分
+            // g 本身
+            g.x += args.x;
+            g.y += args.y;
+            g.circle.translation.set(g.x,g.y);
+            g.text.translation.set(g.x,g.y);
+            for(let i =0;i<gLeft.data.length;i++){
+                gLeft.data[i].x += args.x;
+                gLeft.data[i].y += args.y;
+                gLeft.data[i].circle.translation.set(gLeft.data[i].x,gLeft.data[i].y);
+                gLeft.data[i].text.translation.set(gLeft.data[i].x,gLeft.data[i].y);
+                if(gLeft.data[i].leftLine != null){
+                    gLeft.data[i].leftLine._collection[0].x = gLeft.data[i].x;
+                    gLeft.data[i].leftLine._collection[0].y = gLeft.data[i].y;
+                    gLeft.data[i].leftLine._collection[1].x = gLeft.data[i].leftTree.x;
+                    gLeft.data[i].leftLine._collection[1].y = gLeft.data[i].leftTree.y;
+                }
+                if(gLeft.data[i].rightLine != null){
+                    gLeft.data[i].rightLine._collection[0].x = gLeft.data[i].x;
+                    gLeft.data[i].rightLine._collection[0].y = gLeft.data[i].y;
+                    gLeft.data[i].rightLine._collection[1].x = gLeft.data[i].rightTree.x;
+                    gLeft.data[i].rightLine._collection[1].y = gLeft.data[i].rightTree.y;
+                }
+            }
+
+            // 下降操作
+            // c 本身
+            c.x -= args.x;
+            c.y -= args.y;
+            c.circle.translation.set(c.x,c.y);
+            c.text.translation.set(c.x,c.y);
+
+            for(let i =0;i<cRight.data.length;i++){
+                cRight.data[i].x -= args.x;
+                cRight.data[i].y -= args.y;
+                cRight.data[i].circle.translation.set(cRight.data[i].x,cRight.data[i].y);
+                cRight.data[i].text.translation.set(cRight.data[i].x,cRight.data[i].y);
+                if(cRight.data[i].leftLine != null){
+                    cRight.data[i].leftLine._collection[0].x = cRight.data[i].x;
+                    cRight.data[i].leftLine._collection[0].y = cRight.data[i].y;
+                    cRight.data[i].leftLine._collection[1].x = cRight.data[i].leftTree.x;
+                    cRight.data[i].leftLine._collection[1].y = cRight.data[i].leftTree.y;
+                }
+                if(cRight.data[i].rightLine != null){
+                    cRight.data[i].rightLine._collection[0].x = cRight.data[i].x;
+                    cRight.data[i].rightLine._collection[0].y = cRight.data[i].y;
+                    cRight.data[i].rightLine._collection[1].x = cRight.data[i].rightTree.x;
+                    cRight.data[i].rightLine._collection[1].y = cRight.data[i].rightTree.y;
+                }
+            }
+
+            // 特殊处理
+            // g 的 leftLine
+            if(g.leftLine != null){
+                g.leftLine._collection[0].x = g.x;
+                g.leftLine._collection[0].y = g.y;
+                g.leftLine._collection[1].x = g.leftTree.x;
+                g.leftLine._collection[1].y = g.leftTree.y;
+            }
+            // g 的 rightLine
+            g.rightLine._collection[0].x = g.x;
+            g.rightLine._collection[0].y = g.y;
+            g.rightLine._collection[1].x = g.rightTree.x;
+            g.rightLine._collection[1].y = g.rightTree.y;
+            if(c.leftLine != null){
+                c.leftLine._collection[0].x += cAndcLeftLineDistance/50; 
+            }
+            p.rightLine._collection[1].x += gAndpRightLineDistance/50;
+
+            //完成之后刷新
+            two.update();
+            if(Math.abs(cStartPositionY-c.y)>=50){
+                two.update();
+                resolve();
+                window.clearInterval(timer);
+            };
+
+        },10);
+    });
+
+    promise.then(()=>{
+        console.log("完成第一次旋转")
+        AVLRRR(p);
+    })
+
+
+}
+
+// AVL tree right left rotation
+function AVLRLR(p) {
+    let c = p.leftTree;
+    let g = c.rightTree;
+
+    let cStartPositionX = c.x;
+    let cStartPositionY = c.y;
+    let gStartPositionX = g.x;
+    let gStartPositionY = g.y;
+    let args = {
+        x:0,
+        y:-50/50
+    };
+
+    // g 的左子树
+    let gLeft = new Queue();
+    if(g.leftTree != null){
+        preorder(g.leftTree,gLeft);
+    }
+    // g 的右子树(可能用不到)
+    let gRight = new Queue();
+    preorder(g.rightTree,gLeft);
+
+    // c 的左子树
+    let cLeft = new Queue();
+    preorder(c.leftTree,cRight);
+
+    // 交换线权
+    let tempLine = g.leftLine;
+    g.leftLine = c.rightLine;
+    c.rightLine = tempLine;
+
+    // 交换地位
+    let tempNode = g.leftTree;
+    g.parent = p;
+    g.leftTree = c;
+    p.leftTree = g;
+    c.rightTree = tempNode;
+    c.parent = g;
+    if(c.rightTree != null){
+        c.rightTree.parent = c;
+    }
+
+    // g 的 leftLine 交换线头尾
+    let tempValue = g.leftLine._collection[0].x;
+    g.leftLine._collection[0].x = g.leftLine._collection[1].x;
+    g.leftLine._collection[1].x = tempValue;
+    tempValue = g.leftLine._collection[0].y;
+    g.leftLine._collection[0].y = g.leftLine._collection[1].y;
+    g.leftLine._collection[1].y = tempValue;
+
+
+    let cAndcRightLineDistance;
+    if(c.rightLine != null){
+        cAndcRightLineDistance = c.x-c.rightLine._collection[0].x;
+    }
+    let gAndpLeftLineDistance = g.x-p.leftLine._collection[1].x;
+
+
+    let promise = new Promise((resolve,reject)=>{
+        let timer = setInterval(()=>{
+
+            //提升部分
+            // g 本身
+            g.x += args.x;
+            g.y += args.y;
+            g.circle.translation.set(g.x,g.y);
+            g.text.translation.set(g.x,g.y);
+            for(let i =0;i<gRight.data.length;i++){
+                gRight.data[i].x += args.x;
+                gRight.data[i].y += args.y;
+                gRight.data[i].circle.translation.set(gRight.data[i].x,gRight.data[i].y);
+                gRight.data[i].text.translation.set(gRight.data[i].x,gRight.data[i].y);
+                if(gRight.data[i].leftLine != null){
+                    gRight.data[i].leftLine._collection[0].x = gRight.data[i].x;
+                    gRight.data[i].leftLine._collection[0].y = gRight.data[i].y;
+                    gRight.data[i].leftLine._collection[1].x = gRight.data[i].leftTree.x;
+                    gRight.data[i].leftLine._collection[1].y = gRight.data[i].leftTree.y;
+                }
+                if(gRight.data[i].rightLine != null){
+                    gRight.data[i].rightLine._collection[0].x = gRight.data[i].x;
+                    gRight.data[i].rightLine._collection[0].y = gRight.data[i].y;
+                    gRight.data[i].rightLine._collection[1].x = gRight.data[i].rightTree.x;
+                    gRight.data[i].rightLine._collection[1].y = gRight.data[i].rightTree.y;
+                }
+            }
+
+            // 下降操作
+            // c 本身
+            c.x -= args.x;
+            c.y -= args.y;
+            c.circle.translation.set(c.x,c.y);
+            c.text.translation.set(c.x,c.y);
+
+            for(let i =0;i<cLeft.data.length;i++){
+                cLeft.data[i].x -= args.x;
+                cLeft.data[i].y -= args.y;
+                cLeft.data[i].circle.translation.set(cLeft.data[i].x,cLeft.data[i].y);
+                cLeft.data[i].text.translation.set(cLeft.data[i].x,cLeft.data[i].y);
+                if(cLeft.data[i].leftLine != null){
+                    cLeft.data[i].leftLine._collection[0].x = cLeft.data[i].x;
+                    cLeft.data[i].leftLine._collection[0].y = cLeft.data[i].y;
+                    cLeft.data[i].leftLine._collection[1].x = cLeft.data[i].leftTree.x;
+                    cLeft.data[i].leftLine._collection[1].y = cLeft.data[i].leftTree.y;
+                }
+                if(cLeft.data[i].rightLine != null){
+                    cLeft.data[i].rightLine._collection[0].x = cLeft.data[i].x;
+                    cLeft.data[i].rightLine._collection[0].y = cLeft.data[i].y;
+                    cLeft.data[i].rightLine._collection[1].x = cLeft.data[i].rightTree.x;
+                    cLeft.data[i].rightLine._collection[1].y = cLeft.data[i].rightTree.y;
+                }
+            }
+
+            // 特殊处理
+            // g 的 leftLine
+            if(g.rightLine != null){
+                g.rightLine._collection[0].x = g.x;
+                g.rightLine._collection[0].y = g.y;
+                g.rightLine._collection[1].x = g.rightTree.x;
+                g.rightLine._collection[1].y = g.rightTree.y;
+            }
+            // g 的 rightLine
+            g.leftLine._collection[0].x = g.x;
+            g.leftLine._collection[0].y = g.y;
+            g.leftLine._collection[1].x = g.leftTree.x;
+            g.leftLine._collection[1].y = g.leftTree.y;
+            if(c.rightLine != null){
+                c.rightLine._collection[0].x += cAndcRightLineDistance/50; 
+            }
+            p.leftLine._collection[1].x += gAndpLineLineDistance/50;
+
+            //完成之后刷新
+            two.update();
+            if(Math.abs(cStartPositionY-c.y)>=50){
+                two.update();
+                resolve();
+                window.clearInterval(timer);
+            };
+
+        },10);
+    });
+
+    promise.then(()=>{
+        console.log("完成第一次旋转")
+        AVLLLR(p);
     })
 }
