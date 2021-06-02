@@ -961,6 +961,7 @@ function AVLTreeFixup(node,str) {
                     // 左子树的右子树
                     // 右旋-左旋
                     console.log("左右");
+                    AVLRLR(p);
                     
                 }
             }else{
@@ -1558,7 +1559,7 @@ function AVLRLR(p) {
 
     // c 的左子树
     let cLeft = new Queue();
-    preorder(c.leftTree,cRight);
+    preorder(c.leftTree,cLeft);
 
     // 交换线权
     let tempLine = g.leftLine;
@@ -1662,7 +1663,7 @@ function AVLRLR(p) {
             if(c.rightLine != null){
                 c.rightLine._collection[0].x += cAndcRightLineDistance/50; 
             }
-            p.leftLine._collection[1].x += gAndpLineLineDistance/50;
+            p.leftLine._collection[1].x += gAndpLeftLineDistance/50;
 
             //完成之后刷新
             two.update();
