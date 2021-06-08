@@ -1,45 +1,3 @@
-//  栈类
-function Stack() {
-    this.data = [];
-    this.top = -1;
-
-    this.push = (element)=> {
-        this.data[++this.top] = element;
-    };
-    this.pop = ()=> {
-        this.top--;
-        return this.data.pop();
-    };
-    this.getTop = ()=> {
-        return this.data[this.top - 1];
-    };
-
-    this.size = ()=> {
-        return top+1;
-    };
-    this.clear = ()=> {
-        this.data = [];
-        this.top = -1;
-    };
-}
-
-// 队列类
-function Queue() {
-    this.data = [];
-    this.length = 0;
-    
-    this.pop = ()=> {
-        if(this.length>0){
-            this.length--;
-            return this.data.shift();
-        }
-    }
-
-    this.push = (param)=> {
-        this.data[this.length++] = param;
-    }
-}
-
 // 二叉树类
 function Tree(data) {
     this.data = data;
@@ -106,9 +64,9 @@ function Tree(data) {
                 two.update();
                 let timer2 = setInterval(()=>{
                     this.circle.linewidth -=0.1;
-                    this.circle.stroke = COLORS.BLACK;
                     if(this.circle.linewidth<=1){
                         this.circle.linewidth = 1;
+                        this.circle.stroke = COLORS.BLACK;
                         two.update();
                         clearInterval(timer2);
                         clearInterval(timer);
@@ -165,8 +123,9 @@ function Tree(data) {
 // ---------- start ----------
 // ---------- 常量  ----------
 const COLORS = {
-    RED : "#9c0c13",
-    BLACK : "#29363B"
+    RED : "#ffb3a7",
+    BLACK : "#29363B",
+    WHITE : "#FFFFFF"
 }
 const RADIUS = 20;
 var params = {
@@ -289,29 +248,6 @@ function postorder(node,queue) {
 
 
 
-
-
-// let line = two.makeLine(20,20,two.width/2,100);
-// line.stroke = COLORS.BLACK;
-// line.linewidth = 1;
-
-// let circle = two.makeCircle(two.width/2,100,40);
-// circle.stroke = COLORS.BLACK;
-// circle.linewidth = 1;
-
-// let text =new Two.Text("10",two.width/2,100,"normal");
-// text.stroke = COLORS.BLACK;
-// text.linewidth =1;
-
-
-// console.log(line._collection[1])
-// console.log(line.translation)
-
-// 文本要add到two中
-// two.add(text);
-
-
-// console.log(circle.translation.x);
 
 // 当页面改变大小的时候改变画布的大小
 window.onresize = function(){
