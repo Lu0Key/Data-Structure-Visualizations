@@ -1,3 +1,7 @@
+/**
+ * 红黑树的定义
+ * @param {Number} data 
+ */
 function RBTree(data) {
     this.data = data;
     this.x = 0;
@@ -135,6 +139,9 @@ function RBTree(data) {
         if(this.circle != null){
             this.circle.remove();
         }
+        if(this.text != null){
+            this.text.remove();
+        }
         this.circle = two.makeCircle(this.x,this.y,RADIUS);
         this.circle.stroke = COLORS.BLACK;
         this.circle.linewidth = 1;
@@ -146,13 +153,20 @@ function RBTree(data) {
     }
 }
 
+/**
+ * 初始化树并画出来
+ * @param {Array} array 
+ */
 function drawRBTree(array) {
     insertRBTreeNodeArray(array);
-    
+    console.log("初始化树完成")
 }
 
+/**
+ * 通过数组插入一列点到树中
+ * @param {Array} array 
+ */
 function insertRBTreeNodeArray(array) {
-    console.log("array",array);
     for (let i = 0; i < array.length; i++) {
         insertRBTreeNodeNoAnimation(root,array[i]);
     }
@@ -201,13 +215,13 @@ function fixupRBTreePositionNoAnimation(node) {
     }
     let args = {
         x:0,
-        y:node.parent.y+50
+        y:node.parent.y+params.verticalSpacing
     }
     if(node.parent === root){
         if(node.data < root.data){
-            args.x = root.x-50;
+            args.x = root.x-params.horizontalSpacing;
         } else {
-            args.x = root.x+50;
+            args.x = root.x+params.horizontalSpacing;
         }
         node.nodeDown(args.x,args.y);
         return null;
@@ -217,23 +231,19 @@ function fixupRBTreePositionNoAnimation(node) {
             // 左半边
             if(node.data < node.parent.data){
                 // 左的左
-                args.x = node.parent.x-50;
-                // node.nodeDown(args.x,args.y);
-                // return null;
+                args.x = node.parent.x-params.horizontalSpacing;
             }else{
                 // 左的右
                 args.x = node.parent.x;
-                console.log("node.x",node.parent);
             }
         } else {
             // 右半边
             if(node.data < node.parent.data){
                 // 右的左
                 args.x = node.parent.x;
-                console.log("args.x",args.x)
             }else{
                 // 右的右
-                args.x = node.parent.x+50;
+                args.x = node.parent.x+params.horizontalSpacing;
                 // node.nodeDown(args.x,args.y);
                 // return null;
             }
@@ -255,8 +265,9 @@ function fixupRBTreePositionNoAnimation(node) {
         }
         // 这边会将结点自身push进array，而且是最后一个，因此要删掉;
         array.pop();
+        // 左移
         for (let i = 0; i < array.length; i++) {
-            array[i].nodeUp(-50,0);
+            array[i].nodeUp(-params.horizontalSpacing,0);
 
         }
     } else {
@@ -268,8 +279,9 @@ function fixupRBTreePositionNoAnimation(node) {
                 array.push(tempNode);
             }
         }
+        // 右移
         for (let i = 0; i < array.length; i++) {
-            array[i].nodeUp(50,0);
+            array[i].nodeUp(params.horizontalSpacing,0);
         }
     }
 
@@ -367,16 +379,14 @@ function RBTreeThreeNodeLLRNoAnimation(node) {
     let p = node.parent;
     let isRoot = false;
     // 变颜色 
-    console.log("node",node);
     gp.color = COLORS.RED;
     p.color = COLORS.BLACK;
     // 设置偏移参数
     let args = {
         x:0,
-        y:50
+        y:params.verticalSpacing
     };
     if(gp === root){
-        args.x = 50;
         isRoot = true;
     }
     // 
@@ -395,9 +405,10 @@ function RBTreeThreeNodeLLRNoAnimation(node) {
     gp.parent = p;
     gp.leftTree = tempTree;
     if(gp.leftTree != null){
-        gp.leftTree.parent = gp;
+        gp.leftTree.parent = gp;    
     }
     if(isRoot){
+        args.x = root.x - p.x
         root = p;
     }else{
         if(p.data < p.parent.data){
@@ -407,24 +418,10 @@ function RBTreeThreeNodeLLRNoAnimation(node) {
         }
     }
     if(isRoot){
+
         inorder(root,queueAll);
     }
 
-    // 交换线权
-    // let tempLine = p.rightLine;
-    // p.rightLine = gp.leftLine;
-    // gp.leftLine = tempLine;
-
-    // 线掉头 q
-    // 这个线肯定存在
-    // 线可能没创建
-    // let tempValue = p.rightLine._collection[0].x;
-    // p.rightLine._collection[0].x = p.rightLine._collection[1].x;
-    // p.rightLine._collection[1].x = tempValue;
-    // tempValue = p.rightLine._collection[0].y;
-    // p.rightLine._collection[0].y = p.rightLine._collection[1].y;
-    // p.rightLine._collection[1].y = tempValue;
-    
     queueUp.push(p);
     queueDown.push(gp);
     
@@ -433,20 +430,11 @@ function RBTreeThreeNodeLLRNoAnimation(node) {
     for(let i =0;i<queueUp.length;i++){
         queueUp.data[i].nodeUp(args.x,args.y);
     }
-    // 普通线段上升
-    // for(let i =0;i<queueUp.length;i++){
-    //     queueUp.data[i].resetLine();
-    // }
     // 普通结点下降
     for(let i =0;i<queueDown.length;i++){
         queueDown.data[i].nodeDown(args.x,args.y);
     }
-    // for(let i =0;i<queueDown.length;i++){
-    //     queueDown.data[i].resetLine();
-    // }
-    for(let i=0;i<queueAll.length;i++){
-        queueAll.data[i].nodeDown(+50,0);
-    }
+
 
     // 特殊处理
 
@@ -489,19 +477,12 @@ function RBTreeThreeNodeLRRNoAnimation(node) {
 
 
     for(let i =0;i<queueUp.length;i++){
-        queueUp.data[i].nodeUp(0,50);
+        queueUp.data[i].nodeUp(0,params.verticalSpacing);
     }
-    // 普通线段上升
-    // for(let i =0;i<queueUp.length;i++){
-    //     queueUp.data[i].resetLine();
-    // }
     // 普通结点下降
     for(let i =0;i<queueDown.length;i++){
-        queueDown.data[i].nodeDown(0,50);
+        queueDown.data[i].nodeDown(0,params.verticalSpacing);
     }
-    // for(let i =0;i<queueDown.length;i++){
-    //     queueDown.data[i].resetLine();
-    // }
 
     // 这时候p旋转到了下边，且为红色，所以继续迭代
     fixupRBTreeNoAnimation(p);
@@ -538,20 +519,13 @@ function RBTreeThreeNodeRLRNoAnimation(node){
     queueDown.push(p);
 
     for(let i =0;i<queueUp.length;i++){
-        queueUp.data[i].nodeUp(0,50);
+        queueUp.data[i].nodeUp(0,params.verticalSpacing);
     }
-    // 普通线段上升
-    // for(let i =0;i<queueUp.length;i++){
-    //     queueUp.data[i].resetLine();
-    // }
+
     // 普通结点下降
     for(let i =0;i<queueDown.length;i++){
-        queueDown.data[i].nodeDown(0,50);
+        queueDown.data[i].nodeDown(0,params.verticalSpacing);
     }
-    // for(let i =0;i<queueDown.length;i++){
-    //     queueDown.data[i].resetLine();
-    // }
-
     // 这时候p旋转到了下边，且为红色，所以继续迭代
     fixupRBTreeNoAnimation(p);
 }
@@ -572,11 +546,11 @@ function RBTreeThreeNodeRRRNoAnimation(node) {
     // 设置偏移参数
     let args = {
         x:0,
-        y:50
+        y:params.verticalSpacing
     };
     if(gp === root){
-        args.x = 0;
         isRoot = true;
+        args.x = root.x - p.x
     }
     // 
     let queueUp = new Queue();
@@ -608,20 +582,6 @@ function RBTreeThreeNodeRRRNoAnimation(node) {
         inorder(root,queueAll);
     }
 
-    // 交换线权
-    // let tempLine = p.rightLine;
-    // p.rightLine = gp.leftLine;
-    // gp.leftLine = tempLine;
-
-    // 线掉头 q
-    // 这个线肯定存在
-    // 线可能没创建
-    // let tempValue = p.rightLine._collection[0].x;
-    // p.rightLine._collection[0].x = p.rightLine._collection[1].x;
-    // p.rightLine._collection[1].x = tempValue;
-    // tempValue = p.rightLine._collection[0].y;
-    // p.rightLine._collection[0].y = p.rightLine._collection[1].y;
-    // p.rightLine._collection[1].y = tempValue;
     
     queueUp.push(p);
     queueDown.push(gp);
@@ -630,19 +590,8 @@ function RBTreeThreeNodeRRRNoAnimation(node) {
     for(let i =0;i<queueUp.length;i++){
         queueUp.data[i].nodeUp(args.x,args.y);
     }
-    // 普通线段上升
-    // for(let i =0;i<queueUp.length;i++){
-    //     queueUp.data[i].resetLine();
-    // }
-    // 普通结点下降
     for(let i =0;i<queueDown.length;i++){
         queueDown.data[i].nodeDown(args.x,args.y);
-    }
-    // for(let i =0;i<queueDown.length;i++){
-    //     queueDown.data[i].resetLine();
-    // }
-    for(let i=0;i<queueAll.length;i++){
-        queueAll.data[i].nodeDown(-50,0);
     }
 
     // 特殊处理
@@ -722,13 +671,13 @@ function fixupRBTreePosition(node) {
     }
     let args = {
         x:0,
-        y:node.parent.y+50
+        y:node.parent.y+params.verticalSpacing
     }
     if(node.parent === root){
         if(node.data < root.data){
-            args.x = root.x-50;
+            args.x = root.x - params.horizontalSpacing;
         } else {
-            args.x = root.x+50;
+            args.x = root.x + params.horizontalSpacing;
         }
         node.nodeDown(args.x,args.y);
         node.parent.drawTreeBranch();
@@ -747,7 +696,7 @@ function fixupRBTreePosition(node) {
             // 左半边
             if(node.data < node.parent.data){
                 // 左的左
-                args.x = node.parent.x-50;
+                args.x = node.parent.x - params.horizontalSpacing;
             }else{
                 // 左的右
                 args.x = node.parent.x;
@@ -759,7 +708,7 @@ function fixupRBTreePosition(node) {
                 args.x = node.parent.x;
             }else{
                 // 右的右
-                args.x = node.parent.x+50;
+                args.x = node.parent.x + params.verticalSpacing;
             }
         }
     }
@@ -797,7 +746,7 @@ function fixupRBTreePosition(node) {
             }
         }
 
-        moveArgs.x = -50;
+        moveArgs.x = -params.horizontalSpacing;
         // 这边会将结点自身push进array，而且是最后一个，因此要删掉;
         array.pop();
         
@@ -805,9 +754,6 @@ function fixupRBTreePosition(node) {
         // 说明在右子树，所有更大的要向右移动
         inorder(root.rightTree,queue);
         while(queue.length != 0){
-            for (let i = 0; i < queue.length; i++) {
-                console.log(queue.data[i]);
-            }
             tempNode = queue.pop();
             if(tempNode.data > node.data){
                 array.push(tempNode);
@@ -823,10 +769,8 @@ function fixupRBTreePosition(node) {
                 arrayParents.push(array[i].parent);
             }
         }
-        console.log("array",array);
-        moveArgs.x = 50;
+        moveArgs.x = params.horizontalSpacing;
     }
-    console.log("ppnode",ppnode);
     let promise = new Promise((resolve)=>{
         let count = 0;
         let timer = setInterval(()=>{
@@ -935,16 +879,14 @@ function RBTreeThreeNodeLLR(node) {
     let p = node.parent;
     let isRoot = false;
     // 变颜色 
-    console.log("node",node);
     gp.color = COLORS.RED;
     p.color = COLORS.BLACK;
     // 设置偏移参数
     let args = {
-        x:0,
-        y:50
+        x : 0,
+        y : params.verticalSpacing
     };
     if(gp === root){
-        console.log("root.x-p.x",root.x-p.x);
         args.x = root.x-p.x;
         isRoot = true;
     }
@@ -983,17 +925,6 @@ function RBTreeThreeNodeLLR(node) {
     let tempLine = p.rightLine;
     p.rightLine = gp.leftLine;
     gp.leftLine = tempLine;
-
-    // 线掉头 q
-    // 这个线肯定存在
-    // 线可能没创建
-    // 很有可能不要交换线头，因为resetLine会每次重置，多半看不出来
-    // let tempValue = p.rightLine._collection[0].x;
-    // p.rightLine._collection[0].x = p.rightLine._collection[1].x;
-    // p.rightLine._collection[1].x = tempValue;
-    // tempValue = p.rightLine._collection[0].y;
-    // p.rightLine._collection[0].y = p.rightLine._collection[1].y;
-    // p.rightLine._collection[1].y = tempValue;
     
     queueUp.push(p);
     queueDown.push(gp);
@@ -1096,7 +1027,7 @@ function RBTreeThreeNodeLRR(node) {
             count++;
 
             for(let i =0;i<queueUp.length;i++){
-                queueUp.data[i].nodeUp(0,50/50);
+                queueUp.data[i].nodeUp(0,params.verticalSpacing/50);
             }
             // 普通线段上升
             for(let i =0;i<queueUp.length;i++){
@@ -1104,13 +1035,13 @@ function RBTreeThreeNodeLRR(node) {
             }
             // 普通结点下降
             for(let i =0;i<queueDown.length;i++){
-                queueDown.data[i].nodeDown(0,50/50);
+                queueDown.data[i].nodeDown(0,params.verticalSpacing/50);
             }
             for(let i =0;i<queueDown.length;i++){
                 queueDown.data[i].resetLine();
             }
             // 特殊处理
-            gp.leftLine._collection[1].x +=50/50;
+            gp.leftLine._collection[1].x += params.horizontalSpacing/50;
 
             if(count>=50){
                 resolve();
@@ -1165,7 +1096,7 @@ function RBTreeThreeNodeRLR(node) {
             count++;
 
             for(let i =0;i<queueUp.length;i++){
-                queueUp.data[i].nodeUp(0,50/50);
+                queueUp.data[i].nodeUp(0,params.verticalSpacing/50);
             }
             // 普通线段上升
             for(let i =0;i<queueUp.length;i++){
@@ -1173,13 +1104,13 @@ function RBTreeThreeNodeRLR(node) {
             }
             // 普通结点下降
             for(let i =0;i<queueDown.length;i++){
-                queueDown.data[i].nodeDown(0,50/50);
+                queueDown.data[i].nodeDown(0,params.verticalSpacing/50);
             }
             for(let i =0;i<queueDown.length;i++){
                 queueDown.data[i].resetLine();
             }
             // 特殊处理
-            gp.rightLine._collection[1].x -=50/50;
+            gp.rightLine._collection[1].x -= params.horizontalSpacing/50;
 
             if(count>=50){
                 resolve();
@@ -1199,16 +1130,14 @@ function RBTreeThreeNodeRRR(node) {
     let p = node.parent;
     let isRoot = false;
     // 变颜色 
-    console.log("node",node);
     gp.color = COLORS.RED;
     p.color = COLORS.BLACK;
     // 设置偏移参数
     let args = {
-        x:0,
-        y:50
+        x : 0,
+        y : params.verticalSpacing
     };
     if(gp === root){
-        console.log("root.x-p.x",root.x-p.x);
         args.x = root.x-p.x;
         isRoot = true;
     }
@@ -1352,40 +1281,35 @@ function findRBTreeNode(data) {
     let flag = false;
     let existence = false;
     let node = root;
-    console.log(!flag&&(!existence));
     let queue = new Queue();
     while(!flag&&(!existence)){
         queue.push(node);
         if(node.data === data){
             existence = true;
-            break;
         }
         if(node.data > data){
             if(node.leftTree === null){
                 flag = true;
-                break;
             }else{
                 node = node.leftTree;
             }
         }
         if(node.data < data){
             if(node.rightTree === null){
-                flag = true;
-                break;
+                flag = true
             }else{
                 node = node.rightTree;
             }
         }
     }
 
-    let promise = new Promise((resolve, reject)=>{
+    let promise = new Promise((resolve)=>{
         let timer = setInterval(()=>{
             node = queue.pop();
             node.flash();
             if(node.data === data){
                 resolve();
                 window.clearInterval(timer);
-                
             }
             if(queue.length == 0){
                 resolve();
@@ -1397,7 +1321,6 @@ function findRBTreeNode(data) {
     promise.then(()=>{
         console.log("existence:",existence);
         if(existence){
-            console.log("找到了");
             let count = 0;
             timer = setInterval(()=>{
                 node.flash();
@@ -1405,11 +1328,12 @@ function findRBTreeNode(data) {
                 if(count>=3) {
                     isAnimation = false;
                     window.clearInterval(timer);
+                    promptMessage("已找到");
                 }
             },800);
         }else{
             isAnimation = false;
-            console.log("没找到");
+            promptMessage("不存在");
         }
     });
 }
