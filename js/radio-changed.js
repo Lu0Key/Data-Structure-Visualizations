@@ -170,8 +170,11 @@ $(()=>{
             array = charArray2NumberArray(array);
             let data = array.pop();
             if(array.length > 0){
-                insertBSTNodeArray(array);
+                insertBSTreeNodeArray(array);
             }
+            two.clear();
+            drawTreeImage();
+            two.update();
             $("#addInput")[0].value = "";
             $(".functionContainer > div > button").attr("disabled",true);
             $(".functionContainer > div > input").attr("disabled",true);
@@ -314,6 +317,8 @@ $(()=>{
             if(array.length > 0){
                 insertAVLTreeNodeArray(array);
             }
+            two.clear();
+            drawTreeImage();
             $("#addInput")[0].value = "";
             $(".functionContainer > div > button").attr("disabled",true);
             $(".functionContainer > div > input").attr("disabled",true);
@@ -472,6 +477,8 @@ $(()=>{
             if(array.length > 0){
                 insertRBTreeNodeArray(array);
             }
+            two.clear();
+            drawTreeImage();
             $("#addInput")[0].value = "";
             $(".functionContainer > div > button").attr("disabled",true);
             $(".functionContainer > div > input").attr("disabled",true);

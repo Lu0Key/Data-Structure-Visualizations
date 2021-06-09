@@ -381,12 +381,15 @@ function RBTreeThreeNodeLLRNoAnimation(node) {
     // 变颜色 
     gp.color = COLORS.RED;
     p.color = COLORS.BLACK;
+
+    let movex = 0;
     // 设置偏移参数
     let args = {
         x:0,
         y:params.verticalSpacing
     };
     if(gp === root){
+        movex = root.x-root.leftTree.x;
         isRoot = true;
     }
     // 
@@ -408,7 +411,6 @@ function RBTreeThreeNodeLLRNoAnimation(node) {
         gp.leftTree.parent = gp;    
     }
     if(isRoot){
-        args.x = root.x - p.x
         root = p;
     }else{
         if(p.data < p.parent.data){
@@ -418,7 +420,6 @@ function RBTreeThreeNodeLLRNoAnimation(node) {
         }
     }
     if(isRoot){
-
         inorder(root,queueAll);
     }
 
@@ -434,7 +435,9 @@ function RBTreeThreeNodeLLRNoAnimation(node) {
     for(let i =0;i<queueDown.length;i++){
         queueDown.data[i].nodeDown(args.x,args.y);
     }
-
+    for(let i=0;i<queueAll.length;i++){
+        queueAll.data[i].nodeDown(movex,0);
+    }
 
     // 特殊处理
 
@@ -543,6 +546,8 @@ function RBTreeThreeNodeRRRNoAnimation(node) {
     // 变颜色 
     gp.color = COLORS.RED;
     p.color = COLORS.BLACK;
+
+    let movex = 0;
     // 设置偏移参数
     let args = {
         x:0,
@@ -550,7 +555,7 @@ function RBTreeThreeNodeRRRNoAnimation(node) {
     };
     if(gp === root){
         isRoot = true;
-        args.x = root.x - p.x
+        movex = root.x-root.rightTree.x;
     }
     // 
     let queueUp = new Queue();
@@ -588,10 +593,13 @@ function RBTreeThreeNodeRRRNoAnimation(node) {
 
     // 普通结点上升
     for(let i =0;i<queueUp.length;i++){
-        queueUp.data[i].nodeUp(args.x,args.y);
+        queueUp.data[i].nodeUp(0,args.y);
     }
     for(let i =0;i<queueDown.length;i++){
-        queueDown.data[i].nodeDown(args.x,args.y);
+        queueDown.data[i].nodeDown(0,args.y);
+    }
+    for(let i=0;i<queueAll.length;i++){
+        queueAll.data[i].nodeDown(movex,0);
     }
 
     // 特殊处理
