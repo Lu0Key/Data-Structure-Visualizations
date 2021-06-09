@@ -1,5 +1,3 @@
-
-
 function drawAVLTree(array){
     insertAVLTreeNodeArray(array);
     drawTreeImage();

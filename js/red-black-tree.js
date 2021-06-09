@@ -963,7 +963,7 @@ function RBTreeThreeNodeLLR(node) {
                     p.parent.leftLine._collection[1].x -= 1;
                     p.parent.leftLine._collection[1].x += args.x/50;;
                 }else{
-                    p.parent.rightLine._collection[1].x += 1;
+                    p.parent.rightLine._collection[1].x -= 1;
                     p.parent.rightLine._collection[1].x += args.x/50;;
                 }
             }
