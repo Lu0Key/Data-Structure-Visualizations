@@ -286,7 +286,7 @@ function fixupBSTreePosition(node,nextFixupFunciotn = null){
                 resolve();
                 window.clearInterval(timer);
             }
-        },10);
+        },10/animationSpeed);
     });
 
     promise.then(()=>{

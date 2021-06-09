@@ -61,12 +61,12 @@ function RBTree(data) {
                         clearInterval(timer);
                         return true;
                     }
-                },20)
+                },20/animationSpeed)
             }
-        },20);
+        },20/animationSpeed);
         setTimeout(()=>{
             return true;
-        },800);
+        },800/animationSpeed);
     }
 
     this.removeLeftLine = ()=>{
@@ -633,7 +633,7 @@ function insertRBTreeNode(node,data){
             root.color = COLORS.BLACK;
             root.resetNode();
             isAnimation = false;
-        },200);
+        },200/animationSpeed);
         return;
     }
     // 小于结点就在左边
@@ -789,7 +789,7 @@ function fixupRBTreePosition(node) {
                 resolve();
                 window.clearInterval(timer);
             }
-        },10);
+        },10/animationSpeed);
     });
 
     promise.then(()=>{
@@ -816,7 +816,7 @@ function fixupRBTree(node) {
         setTimeout(()=>{
             root.resetNode();
             isAnimation = false;
-        },400);
+        },400/animationSpeed);
         return;
     }
     // 这时候父节点一定存在
@@ -974,7 +974,7 @@ function RBTreeThreeNodeLLR(node) {
                 resolve();
                 window.clearInterval(timer);
             }
-        },10);
+        },10/animationSpeed);
     })
     
     // p 作为新插入结点继续修正
@@ -1048,7 +1048,7 @@ function RBTreeThreeNodeLRR(node) {
                 resolve();
                 window.clearInterval(timer);
             }
-        },10);
+        },10/animationSpeed);
     })
 
 
@@ -1117,7 +1117,7 @@ function RBTreeThreeNodeRLR(node) {
                 resolve();
                 window.clearInterval(timer);
             }
-        },10);
+        },10/animationSpeed);
     })
 
 
@@ -1237,7 +1237,7 @@ function RBTreeThreeNodeRRR(node) {
                 resolve();
                 window.clearInterval(timer);
             }
-        },10);
+        },10/animationSpeed);
     })
     
     // p 作为新插入结点继续修正
@@ -1266,7 +1266,7 @@ function RBTreeFourNodeDiscoloration(node) {
             gp.rightTree.resetNode();
             resolve();
             window.clearTimeout(timeout);
-        },400);
+        },400/animationSpeed);
     })
     promise.then(()=>{
         fixupRBTree(gp);
@@ -1317,7 +1317,7 @@ function findRBTreeNode(data) {
                 resolve();
                 window.clearInterval(timer);
             }
-        },800);
+        },800/animationSpeed);
     });
 
     promise.then(()=>{
@@ -1332,7 +1332,7 @@ function findRBTreeNode(data) {
                     window.clearInterval(timer);
                     promptMessage("已找到");
                 }
-            },800);
+            },800/animationSpeed);
         }else{
             isAnimation = false;
             promptMessage("不存在");

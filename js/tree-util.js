@@ -86,7 +86,7 @@ function order(str) {
             console.log(str,":",array.toString());
             window.clearInterval(timer);
         }
-    },800);
+    },800/animationSpeed);
     
 }
 // 前序遍历
@@ -153,7 +153,7 @@ function findBinaryTreeNode(data) {
                 resolve();
                 window.clearInterval(timer);
             }
-        },800);
+        },800/animationSpeed);
     });
     promise.then(()=>{
         if(flag){
@@ -166,7 +166,7 @@ function findBinaryTreeNode(data) {
                     window.clearInterval(timer);
                     promptMessage("已找到");
                 }
-            },800);
+            },800/animationSpeed);
         }else{
             isAnimation = false;
             promptMessage("不存在");
@@ -224,7 +224,7 @@ function findBSTreeNode(data) {
                 resolve();
                 window.clearInterval(timer);
             }
-        },800);
+        },800/animationSpeed);
     });
 
     promise.then(()=>{
@@ -239,7 +239,7 @@ function findBSTreeNode(data) {
                     window.clearInterval(timer);
                     promptMessage("已找到");
                 }
-            },800);
+            },800/animationSpeed);
         }else{
             isAnimation = false;
             promptMessage("不存在");

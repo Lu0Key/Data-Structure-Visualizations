@@ -14,6 +14,8 @@ var params = {
     horizontalSpacing:50,
     verticalSpacing:50
 };
+
+var animationSpeed = 1;
 // ---------- 常量 -----------
 // ---------- end  ----------
 

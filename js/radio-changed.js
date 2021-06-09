@@ -180,14 +180,14 @@ $(()=>{
                 let timeout = setTimeout(()=>{
                     insertBSTreeNode(root,data);
                     window.clearTimeout(timeout);
-                },500);
+                },500/animationSpeed);
                 
                 let timer = setInterval(()=>{
                     if(!isAnimation){
                         resolve();
                         window.clearInterval(timer);
                     }
-                },10);
+                },10/animationSpeed);
             });
 
             promise.then(()=>{
@@ -322,14 +322,14 @@ $(()=>{
                 let timeout = setTimeout(()=>{
                     insertAVLTreeNode(root,data);
                     window.clearTimeout(timeout);
-                },500);
+                },500/animationSpeed);
                 
                 let timer = setInterval(()=>{
                     if(!isAnimation){
                         resolve();
                         window.clearInterval(timer);
                     }
-                },10);
+                },10/animationSpeed);
             });
 
             promise.then(()=>{
@@ -480,14 +480,14 @@ $(()=>{
                 let timeout = setTimeout(()=>{
                     insertRBTreeNode(root,data);
                     window.clearTimeout(timeout);
-                },500);
+                },500/animationSpeed);
                 
                 let timer = setInterval(()=>{
                     if(!isAnimation){
                         resolve();
                         window.clearInterval(timer);
                     }
-                },10);
+                },10/animationSpeed);
             });
 
             promise.then(()=>{
@@ -537,7 +537,7 @@ $(()=>{
                         resolve();
                         window.clearInterval(timer);
                     }
-                },10);
+                },10/animationSpeed);
             })
             
             promise.then(()=>{

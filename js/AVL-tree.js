@@ -387,7 +387,7 @@ function AVLTreeFixup(node) {
                 resolve();
                 window.clearInterval(timer);
             }
-        },800);
+        },800/animationSpeed);
     });
 
     promise.then(()=>{
@@ -617,7 +617,7 @@ function AVLLLR(p) {
                 resolve();
                 window.clearInterval(timer);
             };
-        },10);
+        },10/animationSpeed);
     });
 
     promise.then(()=>{
@@ -821,7 +821,7 @@ function AVLRRR(p) {
                 resolve();
                 window.clearInterval(timer);
             };
-        },10);
+        },10/animationSpeed);
     });
 
     promise.then(()=>{
@@ -970,7 +970,7 @@ function AVLLRR(p) {
                 window.clearInterval(timer);
             };
 
-        },10);
+        },10/animationSpeed);
     });
 
     promise.then(()=>{
@@ -1120,7 +1120,7 @@ function AVLRLR(p) {
                 window.clearInterval(timer);
             };
 
-        },10);
+        },10/animationSpeed);
     });
 
     promise.then(()=>{

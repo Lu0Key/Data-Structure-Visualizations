@@ -73,12 +73,12 @@ function Tree(data) {
                         clearInterval(timer);
                         return true;
                     }
-                },20)
+                },20/animationSpeed)
             }
-        },20);
+        },20/animationSpeed);
         setTimeout(()=>{
             return true;
-        },800);
+        },800/animationSpeed);
     }
 
     this.removeLeftLine = ()=>{
