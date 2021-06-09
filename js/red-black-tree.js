@@ -884,7 +884,8 @@ function RBTreeThreeNodeLLR(node) {
     // 设置偏移参数
     let args = {
         x : 0,
-        y : params.verticalSpacing
+        y : params.verticalSpacing,
+        distancePAndGp:gp.x-p.x
     };
     if(gp === root){
         args.x = root.x-p.x;
@@ -960,10 +961,10 @@ function RBTreeThreeNodeLLR(node) {
             // 特殊
             if(p.parent != null){
                 if(p.data < p.parent.data){
-                    p.parent.leftLine._collection[1].x -= 1;
+                    p.parent.leftLine._collection[1].x -= args.distancePAndGp/50;
                     p.parent.leftLine._collection[1].x += args.x/50;;
                 }else{
-                    p.parent.rightLine._collection[1].x -= 1;
+                    p.parent.rightLine._collection[1].x -= args.distancePAndGp/50;
                     p.parent.rightLine._collection[1].x += args.x/50;;
                 }
             }
@@ -1135,7 +1136,8 @@ function RBTreeThreeNodeRRR(node) {
     // 设置偏移参数
     let args = {
         x : 0,
-        y : params.verticalSpacing
+        y : params.verticalSpacing,
+        distancePAndGp:gp.x-p.x
     };
     if(gp === root){
         args.x = root.x-p.x;
@@ -1222,10 +1224,10 @@ function RBTreeThreeNodeRRR(node) {
             // 特殊处理
             if(p.parent != null){
                 if(p.data < p.parent.data){
-                    p.parent.leftLine._collection[1].x -= 1;
-                    p.parent.leftLine._collection[1].x -= args.x/50;;
+                    p.parent.leftLine._collection[1].x -= args.distancePAndGp/50;
+                    p.parent.leftLine._collection[1].x += args.x/50;;
                 }else{
-                    p.parent.rightLine._collection[1].x += 1;
+                    p.parent.rightLine._collection[1].x -= args.distancePAndGp/50;
                     p.parent.rightLine._collection[1].x += args.x/50;;
                 }
             }
